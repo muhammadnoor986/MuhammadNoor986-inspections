@@ -19,6 +19,7 @@ import { AcceptInvitePage } from '../pages/AcceptInvitePage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { LoginPage } from '../pages/LoginPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
+import { ResetPasswordPage } from '../pages/ResetPasswordPage';
 import { UnauthorizedPage } from '../pages/UnauthorizedPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { RoleRoute } from './RoleRoute';
@@ -30,6 +31,8 @@ export function AppRoutes() {
         <Route path="/login" element={<LoginPage />} />
         {/* Public — reached from the Supabase invite email, before the user has a normal application session. See src/pages/AcceptInvitePage.tsx. */}
         <Route path="/accept-invite" element={<AcceptInvitePage />} />
+        {/* Public — reached from the Supabase password-reset email. See src/pages/ResetPasswordPage.tsx. */}
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Route>
 
       <Route element={<ProtectedRoute />}>

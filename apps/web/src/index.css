@@ -107,6 +107,17 @@ body {
   cursor: default;
 }
 
+.link-button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 14px;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  margin-top: 0 !important;
+}
+
 .form-error {
   color: var(--error);
   font-size: 14px;
