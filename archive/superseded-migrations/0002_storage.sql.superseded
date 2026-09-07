@@ -1,0 +1,42 @@
+-- ============================================================================
+-- Storage bucket + policies for uploaded photos and documents.
+--
+-- Convention: every object is stored at
+--   {client_id}/{parent_kind}/{parent_id}/{filename}
+-- so RLS can authorize purely from the path, mirroring the table policies
+-- in 0001_init.sql. The Flutter app must upload using this exact path shape.
+-- ============================================================================
+
+insert into storage.buckets (id, name, public)
+values ('attachments', 'attachments', false)
+on conflict (id) do nothing;
+
+create policy "admins manage attachment files"
+  on storage.objects for all
+  using (bucket_id = 'attachments' and public.is_admin())
+  with check (bucket_id = 'attachments' and public.is_admin());
+
+create policy "client users read permitted attachment files"
+  on storage.objects for select
+  using (
+    bucket_id = 'attachments'
+    and (storage.foldername(name))[1]::uuid = public.current_client_id()
+    and public.client_has_module((storage.foldername(name))[1]::uuid, (storage.foldername(name))[2] || 's')
+  );
+
+create policy "upload_notes users upload attachment files"
+  on storage.objects for insert
+  with check (
+    bucket_id = 'attachments'
+    and public.current_role() = 'upload_notes'
+    and (storage.foldername(name))[1]::uuid = public.current_client_id()
+    and public.client_has_module((storage.foldername(name))[1]::uuid, (storage.foldername(name))[2] || 's')
+  );
+
+create policy "upload_notes users delete own attachment files"
+  on storage.objects for delete
+  using (
+    bucket_id = 'attachments'
+    and public.current_role() = 'upload_notes'
+    and owner = auth.uid()
+  );
