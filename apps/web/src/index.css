@@ -132,6 +132,7 @@ body {
 
 .app-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 24px;
   padding: 12px 24px;
@@ -144,6 +145,7 @@ body {
 
 .app-nav {
   display: flex;
+  flex-wrap: wrap;
   gap: 16px;
   flex: 1;
 }
@@ -161,6 +163,7 @@ body {
 
 .app-user {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 12px;
   font-size: 14px;
@@ -218,12 +221,14 @@ button.danger {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 16px;
 }
 
 .page-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
@@ -249,6 +254,7 @@ button.danger {
 
 .quick-filters {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
 }
 
@@ -296,8 +302,20 @@ button.danger {
 
 /* Data table */
 
+/* display:block + overflow-x:auto turns the table itself into a horizontal
+   scroll container whenever its content is wider than its space — with no
+   visual effect at all when it already fits (no scrollbar appears if
+   there's nothing to scroll). Applying this unconditionally, rather than
+   only under the mobile breakpoint, means a table can never force the whole
+   page to scroll sideways at any width — including tablet widths, where a
+   wide table (e.g. Users: name/email/role/client/status/actions) may still
+   need more room than the viewport gives it. */
 .data-table {
+  display: block;
   width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
   border-collapse: collapse;
   font-size: 14px;
 }
@@ -407,6 +425,7 @@ button.danger {
 
 .form-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 4px;
 }
@@ -432,6 +451,7 @@ button.danger {
 
 .table-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 12px;
 }
@@ -474,6 +494,7 @@ button.danger {
 
 .detail-list dd {
   margin: 0;
+  overflow-wrap: break-word;
 }
 
 /* Pagination */
@@ -524,6 +545,7 @@ button.danger {
 
 .dialog-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
   margin-top: 16px;
@@ -650,6 +672,7 @@ button.danger {
 .note-item p {
   margin: 0 0 6px;
   white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
 .note-meta {
@@ -820,4 +843,86 @@ button.danger {
   color: var(--text-muted);
   cursor: pointer;
   font-size: 14px;
+}
+
+/* ============================================================================
+   Mobile responsiveness
+   ============================================================================
+   Single breakpoint covering every common phone width (320-414px and
+   everything in between) without touching the desktop layout at all above
+   it. Deliberately narrow in scope: reduce page/dialog padding so content
+   isn't squeezed by desktop-sized whitespace, let the header/nav/filter/
+   action rows wrap instead of overflowing, and make wide data tables
+   horizontally scrollable in place (no wrapper element needed — a table
+   with `display: block` keeps its internal row/cell layout while the
+   scrolling itself happens on the table element). */
+@media (max-width: 640px) {
+  .app-content {
+    padding: 16px;
+  }
+
+  .auth-layout {
+    padding: 16px;
+  }
+
+  .app-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .app-nav {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .app-user {
+    justify-content: space-between;
+  }
+
+  /* .data-table's horizontal-scroll behavior is now a base rule (applies at
+     every width) — see its definition above — so no override is needed here. */
+
+  .detail-list {
+    grid-template-columns: 1fr;
+    row-gap: 4px;
+  }
+
+  .detail-list dt {
+    margin-top: 8px;
+  }
+
+  .dialog-backdrop {
+    padding: 12px;
+  }
+
+  .dialog {
+    padding: 16px;
+  }
+
+  .upload-queue-item {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'name dismiss'
+      'bar bar'
+      'status status';
+    row-gap: 4px;
+  }
+
+  .upload-queue-name {
+    grid-area: name;
+  }
+
+  .upload-queue-bar {
+    grid-area: bar;
+  }
+
+  .upload-queue-status {
+    grid-area: status;
+  }
+
+  .upload-queue-dismiss {
+    grid-area: dismiss;
+  }
 }
